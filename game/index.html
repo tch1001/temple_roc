@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<meta name="theme-color" content="#1a0e08">
+<title>Temple Roc</title>
+<link rel="stylesheet" href="style.css">
+<script src="https://telegram.org/js/games.js"></script>
+</head>
+<body>
+<video id="intro" src="temple_roc_start.mp4" preload="auto" playsinline disablepictureinpicture></video>
+
+<!-- Hidden looping clips used as sprite sources via canvas drawImage. -->
+<video id="char-player" src="enoch_running_cropped.mp4" preload="auto" muted loop playsinline></video>
+<video id="char-chaser" src="ave_running_cropped.mp4"   preload="auto" muted loop playsinline></video>
+<audio id="bgm"         src="temple_roc_audio.mp3"      preload="auto" loop></audio>
+
+<canvas id="stage"></canvas>
+
+<div id="hud">
+  <div id="score">0</div>
+  <div id="best">best 0</div>
+</div>
+
+<div id="overlay" class="show">
+  <div class="card">
+    <h1>TEMPLE ROC</h1>
+    <p>Run from the falling temple.</p>
+    <ul class="ctrl">
+      <li>← → at the wall — TURN that way</li>
+      <li>hold ← → — lean to dodge side-pillars</li>
+      <li>↑ / tap — jump &nbsp;·&nbsp; ↓ — slide</li>
+    </ul>
+    <button id="play">TAP TO RUN</button>
+  </div>
+</div>
+
+<div id="gameover" class="hide">
+  <div class="card">
+    <h2>YOU WERE CAUGHT</h2>
+    <div class="final">
+      <div><span id="finalScore">0</span><small>score</small></div>
+      <div><span id="finalCoins">0</span><small>coins</small></div>
+    </div>
+    <button id="again">RUN AGAIN</button>
+    <button id="share" class="ghost">SHARE SCORE</button>
+  </div>
+</div>
+
+<script src="game.js"></script>
+</body>
+</html>
