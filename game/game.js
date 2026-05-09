@@ -27,6 +27,13 @@
   const againBtn    = document.getElementById('again');
   const shareBtn    = document.getElementById('share');
   const intro       = document.getElementById('intro');
+  const coinsEl     = document.getElementById('coins');
+  const finalDist   = document.getElementById('finalDist');
+  const finalCoinPts= document.getElementById('finalCoinPts');
+  const finalBest   = document.getElementById('finalBest');
+  const helpBtn     = document.getElementById('help');
+  const helpModal   = document.getElementById('help-modal');
+  const helpClose   = document.getElementById('help-close');
   const charPlayer  = document.getElementById('char-player');
   const charChaser  = document.getElementById('char-chaser');
   const bgm         = document.getElementById('bgm');
@@ -233,6 +240,7 @@
     speed = 16; distance = 0; coins = 0; score = 0;
     turnAnim = 0; flashAlpha = 0; turnIntent = null;
     scoreEl.textContent = '0';
+    coinsEl.textContent = '🪙 0';
   }
 
   // ---------- update ----------
@@ -322,17 +330,33 @@
 
     score = Math.floor(distance * 0.5 + coins * 25);
     scoreEl.textContent = String(score);
+    coinsEl.textContent = `🪙 ${coins}`;
   }
 
   function die() {
     player.state = 'dead';
+
+    // Make sure the displayed score is the latest — otherwise update() may have
+    // returned early via die() before the per-frame `score = …` line ran.
+    score = Math.floor(distance * 0.5 + coins * 25);
+    scoreEl.textContent = String(score);
+    coinsEl.textContent = `🪙 ${coins}`;
+
     if (score > best) {
       best = score;
       localStorage.setItem('temple_roc_best', String(best));
       bestEl.textContent = `best ${best}`;
     }
-    finalScore.textContent = String(score);
-    finalCoins.textContent = String(coins);
+
+    // Breakdown — exact, since coins*25 is integer:
+    //   floor(distance/2 + coins*25) === floor(distance/2) + coins*25
+    const distPts = Math.floor(distance * 0.5);
+    const coinPts = coins * 25;
+    finalDist.textContent     = String(distPts);
+    finalCoinPts.textContent  = String(coinPts);
+    finalScore.textContent    = String(score);
+    finalBest.textContent     = `personal best ${best}`;
+
     gameover.classList.remove('hide');
     gameover.classList.add('show');
     if (bgm) try { bgm.pause(); } catch (_) {}
@@ -666,11 +690,12 @@
   // ---------- loop ----------
   let last = performance.now();
   let running = false;
+  let paused  = false;                // help modal opened during a run
   let everStarted = false;            // don't paint anything until first run begins
   function loop(now) {
     const dt = Math.min(0.05, (now - last) / 1000);
     last = now;
-    if (running) update(dt);
+    if (running && !paused) update(dt);
     if (everStarted) render();        // before that the canvas stays transparent so the intro video shows
     requestAnimationFrame(loop);
   }
@@ -723,5 +748,29 @@
   againBtn.addEventListener('click', startGame);
   shareBtn.addEventListener('click', () => {
     try { window.TelegramGameProxy && TelegramGameProxy.shareScore(); } catch (_) {}
+  });
+
+  // Help menu — pauses an active run, resumes on close.
+  function openHelp() {
+    if (running && player.state === 'run') {
+      paused = true;
+      if (bgm) try { bgm.pause(); } catch (_) {}
+    }
+    helpModal.classList.remove('hide');
+    helpModal.classList.add('show');
+  }
+  function closeHelp() {
+    helpModal.classList.add('hide');
+    helpModal.classList.remove('show');
+    if (paused) {
+      paused = false;
+      last = performance.now();   // reset dt baseline so the world doesn't lurch forward
+      if (bgm) try { bgm.play().catch(() => {}); } catch (_) {}
+    }
+  }
+  helpBtn.addEventListener('click', openHelp);
+  helpClose.addEventListener('click', closeHelp);
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape' && !helpModal.classList.contains('hide')) closeHelp();
   });
 })();

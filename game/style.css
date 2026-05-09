@@ -64,17 +64,38 @@ html, body {
   left: 0; right: 0;
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-start;
   padding: 14px 20px;
-  pointer-events: none;
+  pointer-events: none;          /* HUD itself doesn't capture taps */
   font-weight: 800;
   text-shadow: 0 2px 0 rgba(0,0,0,.6);
+  z-index: 11;                   /* above #overlay/#gameover so help button works */
 }
+#hud .hud-left, #hud .hud-right { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; }
+#hud .hud-left { align-items: flex-start; }
 
-#score { font-size: 36px; letter-spacing: 1px; }
+#score { font-size: 36px; letter-spacing: 1px; line-height: 1; }
+#coins { font-size: 16px; opacity: .9; }
 #best  { font-size: 14px; opacity: .8; }
 
-#overlay, #gameover {
+#help {
+  pointer-events: auto;           /* re-enable taps on the button */
+  appearance: none;
+  background: rgba(244,194,103,.15);
+  color: var(--gold);
+  border: 2px solid var(--gold);
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  font-size: 16px;
+  font-weight: 800;
+  cursor: pointer;
+  padding: 0;
+  margin-top: 4px;
+  box-shadow: 0 2px 0 rgba(0,0,0,.4);
+}
+#help:active { transform: translateY(1px); box-shadow: 0 1px 0 rgba(0,0,0,.4); }
+
+#overlay, #gameover, #help-modal {
   position: absolute;
   inset: 0;
   display: flex;
@@ -84,8 +105,9 @@ html, body {
   z-index: 10;
   transition: opacity .2s ease;
 }
-#overlay  { background: radial-gradient(ellipse at center, rgba(0,0,0,.20), rgba(0,0,0,.60)); }
-#gameover { background: radial-gradient(ellipse at center, rgba(0,0,0,.55), rgba(0,0,0,.85)); }
+#overlay    { background: radial-gradient(ellipse at center, rgba(0,0,0,.20), rgba(0,0,0,.60)); }
+#gameover   { background: radial-gradient(ellipse at center, rgba(0,0,0,.55), rgba(0,0,0,.85)); }
+#help-modal { background: radial-gradient(ellipse at center, rgba(0,0,0,.65), rgba(0,0,0,.9));  z-index: 12; }
 
 .hide { opacity: 0; pointer-events: none; }
 .show { opacity: 1; }
@@ -164,3 +186,58 @@ button.ghost {
 }
 .final span { font-size: 28px; font-weight: 800; }
 .final small { font-size: 11px; opacity: .7; letter-spacing: 2px; }
+
+.breakdown {
+  margin: 10px auto 6px;
+  text-align: left;
+  display: inline-block;
+  font-size: 15px;
+  color: #d8c39c;
+  min-width: 60%;
+}
+.breakdown .row {
+  display: flex;
+  justify-content: space-between;
+  padding: 4px 6px;
+}
+.breakdown .row .lbl { letter-spacing: 1px; }
+.breakdown .row.total {
+  margin-top: 4px;
+  padding-top: 8px;
+  border-top: 1px solid rgba(244,194,103,.35);
+  color: var(--gold);
+  font-weight: 800;
+  font-size: 18px;
+}
+#finalBest {
+  font-size: 13px;
+  letter-spacing: 2px;
+  color: #d8c39c;
+  margin-bottom: 14px;
+  opacity: .9;
+}
+
+/* Help modal copy bits */
+#help-modal h3 {
+  margin-top: 12px;
+  margin-bottom: 6px;
+  letter-spacing: 3px;
+  font-size: 14px;
+  color: var(--gold);
+}
+#help-modal .formula {
+  background: rgba(0,0,0,.35);
+  border: 1px solid rgba(244,194,103,.3);
+  padding: 8px 10px;
+  border-radius: 6px;
+  margin: 4px 0 10px;
+  color: var(--gold);
+  font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  font-size: 13px;
+}
+#help-modal .note {
+  font-size: 12px;
+  color: #b9a283;
+  line-height: 1.5;
+  margin-bottom: 14px;
+}
