@@ -91,7 +91,7 @@ async def on_callback(update: Update, ctx: ContextTypes.DEFAULT_TYPE) -> None:
     if inline_message_id:
         params["imid"] = inline_message_id
 
-    url = f"{PUBLIC_URL}/game/?{urlencode(params)}"
+    url = f"{PUBLIC_URL}/?{urlencode(params)}"
     await cq.answer(url=url)
 
 
