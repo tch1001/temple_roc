@@ -675,7 +675,7 @@
     submitted = true;
     if (!auth.uid || !auth.sig) return;
     try {
-      await fetch('../submit_score', {
+      await fetch('https://temple-roc.tanchienhao.workers.dev/submit_score', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

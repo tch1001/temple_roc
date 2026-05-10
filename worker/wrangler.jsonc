@@ -1,0 +1,16 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "temple-roc",
+  "main": "src/index.js",
+  "compatibility_date": "2026-05-01",
+  "vars": {
+    "GAME_SHORT_NAME": "templeroc",
+    "GAME_URL": "https://tchlabs.net/templeroc"
+  },
+  "observability": {
+    "enabled": true
+  }
+  // Secrets (NOT in this file): set with `npx wrangler secret put <NAME>`
+  //   BOT_TOKEN          — required, the @BotFather token
+  //   WEBHOOK_SECRET     — optional; if set, must match the secret_token used in setWebhook
+}
